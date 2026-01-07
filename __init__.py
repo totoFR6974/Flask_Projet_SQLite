@@ -28,16 +28,24 @@ def lecture():
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
-        # Vérifier les identifiants
-        if request.form['username'] == 'admin' and request.form['password'] == 'password': # password à cacher par la suite
-            session['authentifie'] = True
-            # Rediriger vers la route lecture après une authentification réussie
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Cas 1 : Connexion Admin
+        if username == 'admin' and password == 'password':
+            session['logged_in'] = True
+            session['username'] = 'admin' # On stocke le nom pour vérifier plus tard
             return redirect(url_for('lecture'))
+            
+        # Cas 2 : Connexion User (Exercice 2)
+        elif username == 'user' and password == '12345':
+            session['logged_in'] = True
+            session['username'] = 'user' # On stocke 'user'
+            return redirect(url_for('lecture'))
+            
         else:
-            # Afficher un message d'erreur si les identifiants sont incorrects
-            return render_template('formulaire_authentification.html', error=True)
-
-    return render_template('formulaire_authentification.html', error=False)
+            return "Identifiants incorrects"
+    return render_template('authentification.html')
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
@@ -80,6 +88,23 @@ def enregistrer_client():
 if __name__ == "__main__":
   app.run(debug=True)
 
+@app.route('/fiche_nom/<string:nom>')
+def fiche_nom(nom):
+    # VERIFICATION : Est-ce que quelqu'un est connecté ? 
+    # ET est-ce que c'est bien l'utilisateur 'user' ?
+    if not session.get('logged_in') or session.get('username') != 'user':
+        # Si ce n'est pas le cas, on bloque l'accès (Erreur 403 : Interdit)
+        return "Accès réservé exclusivement à l'utilisateur 'user'.", 403
+
+    # Si le code arrive ici, c'est que l'utilisateur est bien 'user'
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
+    data = cursor.fetchall()
+    conn.close()
+    
+    return render_template('read_data.html', data=data)
+    
 @app.route('/fiche_nom/<string:nom>')
 def fiche_nom(nom):
     conn = sqlite3.connect('database.db')
