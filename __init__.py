@@ -98,6 +98,86 @@ def search_nom():
         
         return render_template('read_data.html', data=data)
 
+  
+@app.route('/admin_livres', methods=['GET', 'POST'])
+def admin_livres():
+  
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('authentification'))
+
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+
+    if request.method == 'POST':
+        titre = request.form['titre']
+        auteur = request.form['auteur']
+        cursor.execute('INSERT INTO livres (titre, auteur, statut) VALUES (?, ?, 0)', (titre, auteur))
+        conn.commit()
+
+  
+    cursor.execute('SELECT * FROM livres')
+    livres = cursor.fetchall()
+    conn.close()
+    return render_template('admin_livres.html', livres=livres)
+
+
+@app.route('/supprimer_livre/<int:id>')
+def supprimer_livre(id):
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('authentification'))
+        
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM livres WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('admin_livres'))
+
+
+@app.route('/catalogue')
+def catalogue():
+    # Tout le monde peut voir le catalogue, mais il faut être connecté pour emprunter
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    # On récupère tous les livres
+    cursor.execute('SELECT * FROM livres')
+    livres = cursor.fetchall()
+    conn.close()
+    return render_template('catalogue.html', livres=livres)
+
+
+@app.route('/emprunter/<int:id>')
+def emprunter(id):
+    
+    if not session.get('user_type'):
+        return redirect(url_for('authentification'))
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    
+  
+    cursor.execute('UPDATE livres SET statut = 1 WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('catalogue'))
+
+
+@app.route('/rendre/<int:id>')
+def rendre(id):
+    if not session.get('user_type'):
+        return redirect(url_for('authentification'))
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    
+ 
+    cursor.execute('UPDATE livres SET statut = 0 WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('catalogue'))
    
     return render_template('formulaire_recherche.html')
 
