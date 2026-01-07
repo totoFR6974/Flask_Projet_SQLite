@@ -38,3 +38,5 @@ cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('LEFE
 connection.commit()
 connection.close()
 print("Base de données initialisée avec succès (Clients + Livres).")
+
+#update
