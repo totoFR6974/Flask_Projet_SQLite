@@ -91,7 +91,7 @@ def search_nom():
         cursor = conn.cursor()
         
         
-        cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom_recherche,))
+        cursor.execute('SELECT * FROM clients WHERE UPPER(nom) = UPPER(?)', (nom_recherche,))
         data = cursor.fetchall()
         conn.close()
         
