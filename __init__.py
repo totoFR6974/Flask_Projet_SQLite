@@ -83,15 +83,16 @@ if __name__ == "__main__":
 @app.route('/fiche_nom/<string:nom>')
 def fiche_nom(nom):
     conn = sqlite3.connect('database.db')
-    # INDISPENSABLE pour que le template puisse lire client['nom']
-    conn.row_factory = sqlite3.Row 
     cursor = conn.cursor()
     
+    # Utilise fetchall() pour toujours avoir une liste, 
+    # même s'il n'y a qu'un seul résultat
     cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
-    client = cursor.fetchone()
+    clients_trouves = cursor.fetchall() 
     conn.close()
     
-    if client:
-        return render_template('fiche_client.html', client=client)
+    if clients_trouves:
+        # IMPORTANT : on passe la liste 'clients_trouves' à la variable 'data'
+        return render_template('read_data.html', data=clients_trouves)
     else:
         return "Client non trouvé", 404
