@@ -80,4 +80,16 @@ def enregistrer_client():
 if __name__ == "__main__":
   app.run(debug=True)
 
-#
+@app.route('/fiche_nom/<string:nom>')
+def fiche_nom(nom):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
+    client = cursor.fetchone()
+    conn.close()
+
+    if client:
+        return render_template('fiche_client.html', client=client)
+    else:
+        return "Client non trouvé", 404
