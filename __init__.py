@@ -73,5 +73,33 @@ def enregistrer_client():
     conn.close()
     return redirect('/consultation/')
 
+@app.route('/fiche_nom/', methods=['GET', 'POST'])
+def search_nom():
+    # --- PROTECTION (Exercice 2) ---
+    # On vérifie si l'utilisateur est bien connecté en tant que 'user' (ou 'admin')
+    user_type = session.get('user_type')
+    if not user_type:
+        return redirect(url_for('authentification'))
+    
+    # --- TRAITEMENT DU FORMULAIRE (Exercice 1) ---
+    if request.method == 'POST':
+        nom_recherche = request.form['nom']
+        
+        conn = sqlite3.connect('database.db')
+        # On utilise row_factory pour pouvoir appeler les colonnes par leur nom
+        conn.row_factory = sqlite3.Row 
+        cursor = conn.cursor()
+        
+        # Requête SQL pour chercher par nom
+        cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom_recherche,))
+        data = cursor.fetchall()
+        conn.close()
+        
+        # On réutilise le template d'affichage existant pour montrer le résultat
+        return render_template('read_data.html', data=data)
+
+    # Si c'est un GET, on affiche le formulaire de recherche
+    return render_template('formulaire_recherche.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
