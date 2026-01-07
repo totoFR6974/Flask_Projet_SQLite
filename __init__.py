@@ -83,12 +83,14 @@ if __name__ == "__main__":
 @app.route('/fiche_nom/<string:nom>')
 def fiche_nom(nom):
     conn = sqlite3.connect('database.db')
+    # INDISPENSABLE pour que le template puisse lire client['nom']
+    conn.row_factory = sqlite3.Row 
     cursor = conn.cursor()
     
     cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
     client = cursor.fetchone()
     conn.close()
-
+    
     if client:
         return render_template('fiche_client.html', client=client)
     else:
