@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Emprunts</title>
+</head>
+<body>
+    <h1>apts Emprunts & Retours</h1>
+    
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="background-color: #f0f0f0; border: 1px solid #ccc; padding: 10px;">
+        {% for message in messages %}
+            <li><strong>{{ message }}</strong></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <fieldset>
+        <legend>Nouvel Emprunt</legend>
+        <form method="post">
+            <label>Livre :</label>
+            <select name="livre_id" required>
+                <option value="">-- Choisir un livre --</option>
+                {% for livre in livres %}
+                    <option value="{{ livre['id'] }}">
+                        {{ livre['titre'] }} (Stock total: {{ livre['stock'] }})
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <label>Utilisateur :</label>
+            <select name="user_id" required>
+                <option value="">-- Choisir un lecteur --</option>
+                {% for user in users %}
+                    <option value="{{ user['id'] }}">{{ user['pseudo'] }}</option>
+                {% endfor %}
+            </select>
+            
+            <button type="submit">Valider l'emprunt</button>
+        </form>
+    </fieldset>
+
+    <hr>
+
+    <h3>Livres actuellement empruntés (Non rendus)</h3>
+    <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="background-color: #eee;">
+                <th>Livre</th>
+                <th>Emprunté par</th>
+                <th>Date d'emprunt</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for emprunt in emprunts %}
+            <tr>
+                <td>{{ emprunt['titre'] }}</td>
+                <td>{{ emprunt['pseudo'] }}</td>
+                <td>{{ emprunt['date_emprunt'] }}</td>
+                <td>
+                    <a href="{{ url_for('retour_livre', emprunt_id=emprunt['id']) }}" 
+                       style="color: green; font-weight: bold;">
+                       [ RENDRE LE LIVRE ]
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center;">Aucun emprunt en cours.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p><a href="{{ url_for('bibliotheque_accueil') }}">Retour Menu Bibliothèque</a></p>
+</body>
+</html>
