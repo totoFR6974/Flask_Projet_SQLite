@@ -34,6 +34,11 @@ def authentification():
             return render_template('formulaire_authentification.html', error=True)
     return render_template('formulaire_authentification.html', error=False)
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('hello_world'))
+
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
     conn = sqlite3.connect('database.db')
