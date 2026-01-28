@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS livres;
-
-CREATE TABLE livres (
+DROP TABLE IF EXISTS clients;
+CREATE TABLE clients (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    titre TEXT NOT NULL,
-    auteur TEXT NOT NULL,
-    statut INTEGER DEFAULT 0 -- 0 = Dispo, 1 = Emprunté
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    nom TEXT NOT NULL,
+    prenom TEXT NOT NULL,
+    adresse TEXT NOT NULL
 );
