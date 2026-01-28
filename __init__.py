@@ -26,9 +26,14 @@ def authentification():
     if request.method == 'POST':
         if request.form['username'] == 'admin' and request.form['password'] == 'password':
             session['user_type'] = 'admin'
-            return redirect(url_for('lecture'))
+            # AVANT : return redirect(url_for('lecture'))
+            # APRES : On renvoie vers l'accueil ('hello_world')
+            return redirect(url_for('hello_world')) 
+            
         elif request.form['username'] == 'user' and request.form['password'] == '12345':
             session['user_type'] = 'user'
+            # Vous pouvez aussi renvoyer le user vers l'accueil s'il préfère voir le menu
+            # return redirect(url_for('hello_world')) 
             return redirect(url_for('search_nom'))
         else:
             return render_template('formulaire_authentification.html', error=True)
