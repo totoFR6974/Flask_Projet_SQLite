@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Livres</title></head>
+<body>
+    <h1>Administration Bibliothèque</h1>
+    <h2>Ajouter un livre</h2>
+    <form method="post">
+        <input type="text" name="titre" placeholder="Titre" required>
+        <input type="text" name="auteur" placeholder="Auteur" required>
+        <button type="submit">Ajouter</button>
+    </form>
+    
+    <h2>Liste des livres</h2>
+    <ul>
+    {% for livre in livres %}
+        <li>
+            {{ livre['titre'] }} - {{ livre['auteur'] }} 
+            (Statut: {{ 'Emprunté' if livre['statut'] == 1 else 'Dispo' }})
+            <a href="{{ url_for('supprimer_livre', id=livre['id']) }}" style="color:red">Supprimer</a>
+        </li>
+    {% endfor %}
+    </ul>
+    <a href="/">Retour Accueil</a>
+</body>
+</html>
