@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil Bibliothèque</title>
+</head>
+<body>
+    <h1>📚 Gestion de Bibliothèque</h1>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul style="color: green; background: #e0ffe0; padding: 10px; border: 1px solid green;">
+                {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <ul>
+        <li><a href="{{ url_for('gestion_livres') }}">📖 Gérer les Livres (Stock & Recherche)</a></li>
+        <li><a href="{{ url_for('gestion_utilisateurs') }}">👥 Gérer les Utilisateurs</a></li>
+        <li><a href="{{ url_for('emprunt_livre') }}">apts Emprunter / Retourner un livre</a></li>
+    </ul>
+    
+    <hr>
+    <p><a href="/">⬅️ Retour à l'accueil du site</a></p>
+    <p><a href="{{ url_for('logout') }}">Déconnexion</a></p>
+</body>
+</html>
