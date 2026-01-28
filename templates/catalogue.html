@@ -1,33 +1,66 @@
 <!doctype html>
-<html>
-<head><title>Catalogue Bibliothèque</title></head>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalogue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f9; color: #333; padding: 20px; }
+        h1 { text-align: center; color: #2c3e50; }
+        table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #2c3e50; color: white; }
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
+        .badge-dispo { background-color: #e0f7fa; color: #006064; }
+        .badge-emprunte { background-color: #ffebee; color: #c62828; }
+        .btn { padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; color: white; }
+        .btn-emprunt { background-color: #27ae60; }
+        .btn-rendre { background-color: #e67e22; }
+        .nav { text-align: center; margin-top: 20px; }
+        .nav a { color: #2c3e50; margin: 0 10px; text-decoration: none; }
+    </style>
+</head>
 <body>
-    <h1>Catalogue des livres</h1>
+    <h1>📖 Catalogue des Livres</h1>
     
-    <table border="1">
-        <tr><th>Titre</th><th>Auteur</th><th>Disponibilité</th><th>Action</th></tr>
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for livre in livres %}
-        <tr>
-            <td>{{ livre['titre'] }}</td>
-            <td>{{ livre['auteur'] }}</td>
-            <td>
-                {% if livre['statut'] == 0 %}
-                    <span style="color:green;">Disponible</span>
-                {% else %}
-                    <span style="color:red;">Indisponible (Emprunté)</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if livre['statut'] == 0 %}
-                    <a href="/emprunter/{{ livre['id'] }}">Emprunter</a>
-                {% else %}
-                    <a href="/rendre/{{ livre['id'] }}">Rendre</a>
-                {% endif %}
-            </td>
-        </tr>
+            <tr>
+                <td>{{ livre['titre'] }}</td>
+                <td>{{ livre['auteur'] }}</td>
+                <td>
+                    {% if livre['statut'] == 0 %}
+                        <span class="badge badge-dispo">Disponible</span>
+                    {% else %}
+                        <span class="badge badge-emprunte">Emprunté</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if livre['statut'] == 0 %}
+                        <a href="{{ url_for('emprunter', id=livre['id']) }}" class="btn btn-emprunt">Emprunter</a>
+                    {% else %}
+                        <a href="{{ url_for('rendre', id=livre['id']) }}" class="btn btn-rendre">Rendre</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4" style="text-align:center;">Aucun livre dans le catalogue.</td></tr>
         {% endfor %}
+        </tbody>
     </table>
-    
-    <p><a href="/">Retour Accueil</a></p>
+
+    <div class="nav">
+        <a href="/">🏠 Accueil</a>
+        <a href="/logout">Déconnexion</a>
+    </div>
 </body>
 </html>
