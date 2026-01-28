@@ -101,9 +101,6 @@ def fiche_nom(nom):
         return "Client non trouvé", 404
 
 
-# -----------------------------------------------------------
-# --- NOUVELLES ROUTES : BIBLIOTHEQUE (SEQUENCE 6) ---
-# -----------------------------------------------------------
 
 @app.route('/bibliotheque')
 def bibliotheque_accueil():
@@ -215,6 +212,5 @@ def retour_livre(emprunt_id):
 
 
 # --- LANCEMENT DE L'APPLICATION ---
-# (Toujours à la fin du fichier)
 if __name__ == "__main__":
     app.run(debug=True)
