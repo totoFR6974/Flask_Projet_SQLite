@@ -1,28 +1,49 @@
 <!doctype html>
-<html>
-<head><title>Gestion Stock Bibliothèque</title></head>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Administration Livres</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f9; padding: 20px; max-width: 800px; margin: auto; }
+        h1, h2 { color: #c0392b; text-align: center; }
+        .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 40%; margin-right: 10px; }
+        button { padding: 10px 20px; background-color: #c0392b; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { background: white; border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        li:first-child { border-top-left-radius: 8px; border-top-right-radius: 8px; }
+        li:last-child { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-bottom: none; }
+        .delete-btn { color: #e74c3c; text-decoration: none; font-weight: bold; border: 1px solid #e74c3c; padding: 5px 10px; border-radius: 4px; }
+        .delete-btn:hover { background-color: #e74c3c; color: white; }
+    </style>
+</head>
 <body>
-    <h1>Gestion du stock (Admin)</h1>
+    <h1>⚙️ Administration Bibliothèque</h1>
+
+    <div class="form-container">
+        <h2>Ajouter un livre</h2>
+        <form method="post" style="text-align:center;">
+            <input type="text" name="titre" placeholder="Titre du livre" required>
+            <input type="text" name="auteur" placeholder="Auteur" required>
+            <button type="submit">Ajouter +</button>
+        </form>
+    </div>
+
+    <h2>Liste des livres</h2>
+    <ul>
+    {% for livre in livres %}
+        <li>
+            <span><strong>{{ livre['titre'] }}</strong> par <em>{{ livre['auteur'] }}</em></span>
+            <a href="{{ url_for('supprimer_livre', id=livre['id']) }}" class="delete-btn" onclick="return confirm('Sûr ?')">Supprimer</a>
+        </li>
+    {% else %}
+        <li style="justify-content: center;">Aucun livre. Utilisez le formulaire ci-dessus.</li>
+    {% endfor %}
+    </ul>
     
-    <h3>Ajouter un livre</h3>
-    <form method="post">
-        Titre : <input type="text" name="titre" required>
-        Auteur : <input type="text" name="auteur" required>
-        <input type="submit" value="Ajouter au stock">
-    </form>
-    
-    <h3>Livres en rayon</h3>
-    <table border="1">
-        <tr><th>Titre</th><th>Auteur</th><th>Statut</th><th>Action</th></tr>
-        {% for livre in livres %}
-        <tr>
-            <td>{{ livre['titre'] }}</td>
-            <td>{{ livre['auteur'] }}</td>
-            <td>{% if livre['statut'] == 0 %}Disponible{% else %}Emprunté{% endif %}</td>
-            <td><a href="/supprimer_livre/{{ livre['id'] }}" style="color:red;">Supprimer</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-    <p><a href="/">Retour Accueil</a></p>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="/" style="color:#7f8c8d; text-decoration:none;">Retour Accueil</a>
+    </div>
 </body>
 </html>
