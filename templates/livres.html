@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Livres</title>
+</head>
+<body>
+    <h1>📖 Gestion des Livres</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="color: blue; border: 1px solid blue; padding: 10px; margin-bottom: 10px;">
+          {% for message in messages %}{{ message }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <fieldset>
+        <legend>Rechercher un livre</legend>
+        <form method="get">
+            <input type="text" name="q" placeholder="Titre ou auteur..." value="{{ request.args.get('q', '') }}">
+            <button type="submit">Rechercher</button>
+            <a href="{{ url_for('gestion_livres') }}"><button type="button">Voir tout</button></a>
+        </form>
+    </fieldset>
+
+    <br>
+
+    <fieldset>
+        <legend>Ajouter un nouveau livre</legend>
+        <form method="post">
+            <input type="hidden" name="ajout_livre" value="1">
+            <input type="text" name="titre" placeholder="Titre du livre" required>
+            <input type="text" name="auteur" placeholder="Auteur" required>
+            <input type="number" name="stock" placeholder="Quantité" value="1" min="1" required>
+            <button type="submit">Ajouter le livre</button>
+        </form>
+    </fieldset>
+
+    <h3>Liste des livres en base</h3>
+    <ul>
+    {% for livre in livres %}
+        <li>
+            <strong>{{ livre['titre'] }}</strong> - <em>{{ livre['auteur'] }}</em> 
+            (Stock total : {{ livre['stock'] }})
+            
+            <form method="post" style="display:inline; margin-left: 10px;">
+                <input type="hidden" name="supprimer_livre" value="1">
+                <input type="hidden" name="livre_id" value="{{ livre['id'] }}">
+                <button type="submit" onclick="return confirm('Êtes-vous sûr ?');" style="color:red;">X</button>
+            </form>
+        </li>
+    {% else %}
+        <li>Aucun livre trouvé.</li>
+    {% endfor %}
+    </ul>
+
+    <p><a href="{{ url_for('bibliotheque_accueil') }}">Retour Menu Bibliothèque</a></p>
+</body>
+</html>
