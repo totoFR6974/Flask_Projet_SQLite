@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilisateurs Bibliothèque</title>
+</head>
+<body>
+    <h1>👥 Gestion des Utilisateurs</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 10px;">
+          {% for message in messages %}{{ message }}<br>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <fieldset>
+        <legend>Créer un utilisateur</legend>
+        <form method="post">
+            <input type="text" name="pseudo" placeholder="Pseudo" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <label>
+                <input type="checkbox" name="est_admin"> Est Administrateur ?
+            </label>
+            <button type="submit">Créer</button>
+        </form>
+    </fieldset>
+    
+    <h3>Liste des utilisateurs inscrits</h3>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>Pseudo</th>
+            <th>Rôle</th>
+        </tr>
+    {% for user in users %}
+        <tr>
+            <td>{{ user['id'] }}</td>
+            <td>{{ user['pseudo'] }}</td>
+            <td>
+                {% if user['est_admin'] %} 
+                    <span style="color:red; font-weight:bold;">Admin</span> 
+                {% else %} 
+                    Lecteur 
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <p><a href="{{ url_for('bibliotheque_accueil') }}">Retour Menu Bibliothèque</a></p>
+</body>
+</html>
