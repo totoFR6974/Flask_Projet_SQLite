@@ -1,11 +1,30 @@
 import sqlite3
 
+
 connection = sqlite3.connect('database.db')
+
 
 with open('schema.sql') as f:
     connection.executescript(f.read())
 
 cur = connection.cursor()
+
+
+cur.execute('''
+    CREATE TABLE IF NOT EXISTS livres (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        titre TEXT, 
+        auteur TEXT, 
+        statut INTEGER DEFAULT 0
+    )
+''')
+
+
+cur.execute("INSERT INTO livres (titre, auteur, statut) VALUES (?, ?, 0)", ('Le Petit Prince', 'Antoine de Saint-Exupéry'))
+cur.execute("INSERT INTO livres (titre, auteur, statut) VALUES (?, ?, 0)", ('1984', 'George Orwell'))
+cur.execute("INSERT INTO livres (titre, auteur, statut) VALUES (?, ?, 0)", ('Harry Potter', 'J.K. Rowling'))
+cur.execute("INSERT INTO livres (titre, auteur, statut) VALUES (?, ?, 0)", ('L''Étranger', 'Albert Camus'))
+
 
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('DUPONT', 'Emilie', '123, Rue des Lilas, 75001 Paris'))
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('LEROUX', 'Lucas', '456, Avenue du Soleil, 31000 Toulouse'))
@@ -18,3 +37,6 @@ cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('LEFE
 
 connection.commit()
 connection.close()
+print("Base de données initialisée avec succès (Clients + Livres).")
+
+#update
