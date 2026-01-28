@@ -1,30 +1,222 @@
 <!doctype html>
-<html>
+<html lang="fr">
 <head>
-    <title>Flask Server</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque - Accueil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Propre */
-        #jumpscare-video {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            object-fit: cover;
-            z-index: 9999;
-            background-color: black;
+        :root {
+            --primary-color: #2c3e50; /* Bleu nuit */
+            --accent-color: #e67e22;  /* Orange pour les actions */
+            --bg-color: #f4f4f9;      /* Gris très clair */
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* En-tête */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-weight: 300;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Status Bar (Connecté en tant que...) */
+        .status-bar {
+            width: 100%;
+            background-color: #ecf0f1;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cartes */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Boutons */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #34495e;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #d35400;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Icônes (Emoji) */
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Admin badge */
+        .badge-admin {
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
 
-<h1>Bibliothèque</h1>
-<ul>
-    <li><a href="/catalogue">Voir le catalogue (Pour tous)</a></li>
-    <li><a href="/admin_livres">Gestion des livres (Admin seulement)</a></li>
-    <li><a href="/authentification">Se connecter</a></li>
-</ul>
+    <header>
+        <h1>📚 Ma Bibliothèque</h1>
+        <p>Gérez vos livres et vos emprunts simplement</p>
+    </header>
 
-</script>
+    <div class="status-bar">
+        {% if session.get('user_type') %}
+            Connecté en tant que : <strong>{{ session.get('user_type')|upper }}</strong>
+            {% if session.get('user_type') == 'admin' %} <span class="badge-admin">ADMIN</span> {% endif %}
+            &nbsp; | &nbsp; <a href="/logout" style="color: #e74c3c;">Se déconnecter</a>
+        {% else %}
+            Vous n'êtes pas connecté.
+        {% endif %}
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+            <div>
+                <span class="icon">📖</span>
+                <h2>Catalogue</h2>
+                <p>Consultez la liste des livres disponibles, voir les auteurs et empruntez ou rendez des ouvrages.</p>
+            </div>
+            <a href="/catalogue" class="btn btn-accent">Accéder au Catalogue</a>
+        </div>
+
+        {% if session.get('user_type') == 'admin' %}
+        <div class="card" style="border-left: 5px solid #c0392b;">
+            <div>
+                <span class="icon">⚙️</span>
+                <h2>Gestion Livres</h2>
+                <p>Espace réservé aux administrateurs. Ajoutez de nouveaux livres au stock ou supprimez des références.</p>
+            </div>
+            <a href="/admin_livres" class="btn">Gérer les livres</a>
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div>
+                <span class="icon">🔐</span>
+                <h2>Compte</h2>
+                {% if session.get('user_type') %}
+                    <p>Changez d'utilisateur ou déconnectez-vous de votre session actuelle.</p>
+                {% else %}
+                    <p>Connectez-vous pour pouvoir emprunter des livres ou gérer la bibliothèque.</p>
+                {% endif %}
+            </div>
+            <a href="/authentification" class="btn btn-outline">
+                {% if session.get('user_type') %} Changer de compte {% else %} Se connecter {% endif %}
+            </a>
+        </div>
+
+        <div class="card">
+            <div>
+                <span class="icon">📂</span>
+                <h2>Clients</h2>
+                <p>Accès à la base de données des clients (Exercices précédents).</p>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <a href="/consultation/" class="btn" style="font-size: 0.8rem; flex:1;">Liste</a>
+                <a href="/fiche_nom/" class="btn" style="font-size: 0.8rem; flex:1;">Recherche</a>
+            </div>
+        </div>
+
+    </div>
 
 </body>
 </html>
