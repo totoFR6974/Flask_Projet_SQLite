@@ -155,5 +155,60 @@ def rendre(id):
     conn.close()
     return redirect(url_for('catalogue'))
 
+# ==========================================
+# MODULE : GESTIONNAIRE DE TACHES (Mini Projet)
+# ==========================================
+
+@app.route('/taches')
+def taches_index():
+    # Vérifie si l'utilisateur est connecté (Admin ou User)
+    if not session.get('user_type'):
+        return redirect(url_for('authentification'))
+    
+    conn = get_db_connection()
+    # On récupère les tâches, les plus urgentes en premier, puis celles terminées à la fin
+    taches = conn.execute('SELECT * FROM taches ORDER BY est_terminee ASC, date_echeance ASC').fetchall()
+    conn.close()
+    return render_template('taches.html', taches=taches)
+
+@app.route('/taches/ajouter', methods=['POST'])
+def ajouter_tache():
+    if not session.get('user_type'):
+        return redirect(url_for('authentification'))
+    
+    titre = request.form['titre']
+    description = request.form['description']
+    date_echeance = request.form['date_echeance']
+    
+    conn = get_db_connection()
+    conn.execute('INSERT INTO taches (titre, description, date_echeance) VALUES (?, ?, ?)',
+                 (titre, description, date_echeance))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('taches_index'))
+
+@app.route('/taches/terminer/<int:id>')
+def terminer_tache(id):
+    if not session.get('user_type'):
+        return redirect(url_for('authentification'))
+        
+    conn = get_db_connection()
+    # On passe la tâche à "Terminée" (1)
+    conn.execute('UPDATE taches SET est_terminee = 1 WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('taches_index'))
+
+@app.route('/taches/supprimer/<int:id>')
+def supprimer_tache(id):
+    if not session.get('user_type'):
+        return redirect(url_for('authentification'))
+        
+    conn = get_db_connection()
+    conn.execute('DELETE FROM taches WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('taches_index'))
+    
 if __name__ == "__main__":
     app.run(debug=True)
