@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionnaire de Tâches</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f4f9; color: #333; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        
+        /* CARTE FORMULAIRE */
+        .card-form { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        input[type="text"], input[type="date"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
+        textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px; box-sizing: border-box; font-family: inherit; }
+        button.btn-add { background-color: #27ae60; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; transition: 0.3s; }
+        button.btn-add:hover { background-color: #219150; }
+
+        /* LISTE DES TACHES */
+        .task-list { list-style: none; padding: 0; }
+        .task-card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #3498db; transition: transform 0.2s; }
+        .task-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* STYLE TACHE TERMINEE */
+        .task-done { border-left-color: #2ecc71; background-color: #f9f9f9; opacity: 0.7; }
+        .task-done h3 { text-decoration: line-through; color: #7f8c8d; }
+
+        .task-info h3 { margin: 0 0 5px 0; color: #2c3e50; }
+        .task-desc { margin: 0; color: #666; font-size: 0.95rem; }
+        .task-date { display: inline-block; background: #ecf0f1; color: #7f8c8d; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; margin-top: 8px; }
+        
+        /* BOUTONS ACTIONS */
+        .actions { display: flex; gap: 10px; }
+        .btn { text-decoration: none; padding: 8px 12px; border-radius: 5px; font-size: 0.9rem; font-weight: bold; }
+        .btn-check { background-color: #e67e22; color: white; }
+        .btn-check:hover { background-color: #d35400; }
+        .btn-delete { background-color: white; border: 1px solid #c0392b; color: #c0392b; }
+        .btn-delete:hover { background-color: #c0392b; color: white; }
+        
+        .nav-link { display: block; text-align: center; margin-top: 30px; color: #7f8c8d; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Mes Tâches</h1>
+
+        <div class="card-form">
+            <h3 style="margin-top:0; color:#2c3e50;">Nouvelle tâche</h3>
+            <form action="{{ url_for('ajouter_tache') }}" method="post">
+                <div class="form-row">
+                    <input type="text" name="titre" placeholder="Titre de la tâche..." required>
+                    <input type="date" name="date_echeance" required>
+                </div>
+                <textarea name="description" rows="2" placeholder="Description (optionnel)..."></textarea>
+                <button type="submit" class="btn-add">Ajouter la tâche</button>
+            </form>
+        </div>
+
+        <ul class="task-list">
+            {% for tache in taches %}
+            <li class="task-card {% if tache['est_terminee'] %}task-done{% endif %}">
+                <div class="task-info">
+                    <h3>{{ tache['titre'] }}</h3>
+                    {% if tache['description'] %}
+                        <p class="task-desc">{{ tache['description'] }}</p>
+                    {% endif %}
+                    <span class="task-date">📅 Pour le : {{ tache['date_echeance'] }}</span>
+                </div>
+                
+                <div class="actions">
+                    {% if not tache['est_terminee'] %}
+                        <a href="/taches/terminer/{{ tache['id'] }}" class="btn btn-check">✔ Terminer</a>
+                    {% else %}
+                        <span style="color:#27ae60; font-weight:bold; padding:0 10px;">Terminée !</span>
+                    {% endif %}
+                    <a href="/taches/supprimer/{{ tache['id'] }}" class="btn btn-delete" onclick="return confirm('Supprimer cette tâche ?')">✖</a>
+                </div>
+            </li>
+            {% else %}
+                <p style="text-align:center; color:#999; margin-top:30px;">Aucune tâche pour le moment. Profitez-en ! 🎉</p>
+            {% endfor %}
+        </ul>
+
+        <a href="/" class="nav-link">← Retour au Tableau de bord</a>
+    </div>
+</body>
+</html>
