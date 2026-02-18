@@ -6,3 +6,11 @@ CREATE TABLE clients (
     prenom TEXT NOT NULL,
     adresse TEXT NOT NULL
 );
+/* --- MODULE GESTIONNAIRE DE TACHES (Mini Projet) --- */
+CREATE TABLE IF NOT EXISTS taches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titre TEXT NOT NULL,
+    description TEXT,
+    date_echeance DATE,
+    est_terminee BOOLEAN DEFAULT 0
+);
